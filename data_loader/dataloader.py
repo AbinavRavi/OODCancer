@@ -1,23 +1,19 @@
-from utils.imageloader import data_loader_classifier
-from utils.imageloader import data_loader_segmenter
+from data_loader.imageloader import data_loader_classifier
+from data_loader.img_transform import *
 
 from torch.utils.data import DataLoader
 from torch.utils.data import random_split
 
-from utils.medTransform import *
 
 seed=137
 torch.manual_seed(seed)
 torch.cuda.manual_seed(seed)
 np.random.seed(seed)
 
-def prepare_data(path_pickle='./utils/', ct_dir = '/home/data/physionet-ct-isch/1.2.0/Raw_ct_scans/ct_scans/', mask_dir = '/home/data/physionet-ct-isch/1.2.0/Raw_ct_scans/masks/', batch=1,create_split=True, split=(0.7,.15,.15), segmenter=True):
-    if segmenter:
-        dataloader= data_loader_segmenter(path_pickle,ct_dir, mask_dir)
+def prepare_data(path_to_csv,load_classes,path_to_img,create_split=False,split=(70,10,20),batch=16):
     
-    
-    if not segmenter:
-        raise('Not Done!!')
+    ds=data_loader_classifier(path_to_csv,load_classes, path_to_img)
+
         
     image_transform = Compose([
         ImToCaffe(),
@@ -25,8 +21,8 @@ def prepare_data(path_pickle='./utils/', ct_dir = '/home/data/physionet-ct-isch/
     ])
     target_transform = SegToTensor()
     
-    # Medical data to 3 dim data like other image files
-    ds = TransformData(dataloader, input_transforms=image_transform, target_transform=target_transform)
+    
+    ds = TransformData(ds, input_transforms=image_transform, target_transform=target_transform)
 
     if create_split:
         
