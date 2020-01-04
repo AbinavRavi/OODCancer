@@ -1,23 +1,30 @@
 import sklearn.metrics as sk
+import numpy as np
 
-auroc_list = []
-
+def get_fnpr(labels,scores,fixed_tpr=0.95):
+    fpr, tpr, thresholds = sk.roc_curve(labels, scores)
+    
+    ### fit a 3rd order polynomial
+    z = np.polyfit(tpr, fpr, 3)
+    f = np.poly1d(z)
+    
+    return f(fixed_tpr)
 
 def get_metrics(_pos, _neg):
     pos = np.array(_pos[:]).reshape((-1, 1))
     neg = np.array(_neg[:]).reshape((-1, 1))
-    examples = np.squeeze(np.vstack((pos, neg)))
-    labels = np.zeros(len(examples), dtype=np.int32)
+    scores = np.squeeze(np.vstack((pos, neg)))
+    labels = np.zeros(len(scores), dtype=np.int32)
     labels[:len(pos)] += 1
 
-    auroc = sk.roc_auc_score(labels, examples)
+    auroc = sk.roc_auc_score(labels, scores)
+    aupr=sk.average_precision_score(labels, scores)
+    fnpr=get_fnpr(labels,scores,fixed_tpr=0.95)
 
-    return auroc
-
-
+    return {'auroc':auroc,'aupr':aupr,'fnpr':fnpr}
 
 def get_and_print_results(ood_loader):
     out_score = get_ood_scores(ood_loader)
-    auroc = get_metrics(out_score, in_score)
+    metrics = get_metrics(out_score, in_score)
     # print('AUROC: \t\t\t{:.2f}'.format(100 * auroc))
-    return auroc
+    return metrics
