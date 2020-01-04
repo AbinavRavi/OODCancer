@@ -1,5 +1,5 @@
 import torch.nn as nn
-
+loss = nn.CrossEntropyLoss()
 def loss_fn(input,label):
-    loss = nn.CrossEntropyLoss(input, label)
-    return loss
+    losses = loss(input,label)
+    return losses

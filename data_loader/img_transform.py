@@ -59,7 +59,7 @@ class TransformData(Dataset):
         target_transform: `Transform` for the target image
     """
 
-    def __init__(self, dataset, input_transforms=None, target_transform=None, load_classes):
+    def __init__(self, dataset,load_classes, input_transforms=None, target_transform=None, ):
         #super().__init__(dataset)
         self.ds = dataset
         self.input_transforms = input_transforms

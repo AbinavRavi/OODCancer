@@ -22,11 +22,10 @@ def prepare_data(path_to_csv,load_classes,path_to_img,create_split=False,split=(
     target_transform = SegToTensor()
     
     
-    ds = TransformData(ds, input_transforms=image_transform, target_transform=target_transform, load_classes)
-
+    ds = TransformData(ds,load_classes, input_transforms=image_transform, target_transform=target_transform)
     if create_split:
         
-        if sum(split) != 1:
+        if int(sum(split)) != 1:
             raise ValueError('Invalid Split. Sum of split to be 1')
        
         trainSize=int(split[0]*len(ds))
