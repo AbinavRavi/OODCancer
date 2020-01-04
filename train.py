@@ -64,7 +64,7 @@ for i in tqdm.trange(epochs,desc='epochs',leave=False):
     valLoss = np.array(vallosses).mean()
     print('epoch:{} \t'.format(i+1),'trainloss:{}'.format(trainLoss),'\t','valloss:{}'.format(valLoss))
     if (epoch%5==0):
-        torch.save(model,'./model/{}.pt'.format(i+1))
+        torch.save(model,'./trained_model/{}.pt'.format(i+1))
     
         
 
