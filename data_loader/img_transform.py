@@ -41,7 +41,7 @@ class NpToTensor(object):
 class SegToTensor(object):
 
     def __call__(self, seg):
-        seg = all_classes.index(seg)
+        seg = seg
         return seg
 
     def __repr__(self):
@@ -59,16 +59,18 @@ class TransformData(Dataset):
         target_transform: `Transform` for the target image
     """
 
-    def __init__(self, dataset, input_transforms=None, target_transform=None):
+    def __init__(self, dataset, input_transforms=None, target_transform=None, load_classes):
         #super().__init__(dataset)
         self.ds = dataset
         self.input_transforms = input_transforms
         self.target_transform = target_transform
+        self.classes=load_classes
         
 
     def __getitem__(self, idx):
         # extract data from inner dataset
         inputs, target = self.ds[idx]
+        target=self.classes.index(target)
         
         inputs=self.input_transforms(inputs)    
         if self.target_transform is not None:

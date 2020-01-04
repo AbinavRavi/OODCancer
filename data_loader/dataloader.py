@@ -22,7 +22,7 @@ def prepare_data(path_to_csv,load_classes,path_to_img,create_split=False,split=(
     target_transform = SegToTensor()
     
     
-    ds = TransformData(ds, input_transforms=image_transform, target_transform=target_transform)
+    ds = TransformData(ds, input_transforms=image_transform, target_transform=target_transform, load_classes)
 
     if create_split:
         
