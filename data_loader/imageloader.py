@@ -3,7 +3,7 @@ from torch.utils.data import Dataset
 import pandas as pd
 from skimage.io import imread
 
-from utils.data_utils import all_classes
+from config.data_utils import all_classes
 
 
 class data_loader_classifier(Dataset):

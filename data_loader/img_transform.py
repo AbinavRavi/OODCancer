@@ -7,7 +7,8 @@ from scipy import ndimage as ndi
 from random import randint, uniform
 from scipy import ndimage
 
-from utils.data_utils import dsMean, dsStd 
+from config.data_utils import dsMean, dsStd 
+from config.data_utils import all_classes
 
 class ImToCaffe(object): 
     """
@@ -15,6 +16,8 @@ class ImToCaffe(object):
     """
         
     def __call__(self, im):
+        im=im.astype(float)
+        im/=255.
         im=im-dsMean
         im=im/dsStd
         
@@ -38,7 +41,7 @@ class NpToTensor(object):
 class SegToTensor(object):
 
     def __call__(self, seg):
-        seg = torch.from_numpy(seg.astype(np.float)).float()
+        seg = all_classes.index(seg)
         return seg
 
     def __repr__(self):
