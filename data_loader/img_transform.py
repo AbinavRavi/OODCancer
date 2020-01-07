@@ -69,6 +69,13 @@ class TransformData(Dataset):
     def transform(self,inputs):
         angle=uniform(-20,20)
         translate=(uniform(-5,5),uniform(-5,5),0)
+        flip=uniform(0,3)
+        if flip<1:
+            # flip horizontal
+            inputs=np.flipud(inputs)
+        else if flip>2:
+            inputs=np.fliplr(inputs)
+            # flip vertical
         inputs=ndimage.rotate(inputs,angle,reshape=False,order=3,mode='nearest')
         #import pdb; pdb.set_trace()
         inputs=ndimage.shift(inputs, translate,mode='nearest')
@@ -81,7 +88,7 @@ class TransformData(Dataset):
         inputs, target = self.ds[idx]
         target=self.classes.index(target)
         inputs = self.transform(inputs)
-        noise=np.random.normal(loc=0.0,scale=0.1,size=(224,224,3))
+    
         inputs=self.input_transforms(inputs)
         return inputs, target
 
