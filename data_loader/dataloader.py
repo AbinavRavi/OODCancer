@@ -4,6 +4,8 @@ from data_loader.img_transform import *
 from torch.utils.data import DataLoader
 from torch.utils.data import random_split
 
+from torchvision import transforms
+
 
 seed=137
 torch.manual_seed(seed)
@@ -19,6 +21,7 @@ def prepare_data(path_to_csv,load_classes,path_to_img,create_split=False,split=(
         ImToCaffe(),
         NpToTensor()
     ])
+
     target_transform = SegToTensor()
     
     

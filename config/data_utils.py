@@ -11,5 +11,5 @@ lesion_type_dict = {
 
 # all_classes= ['bkl', 'nv', 'df', 'mel', 'vasc', 'bcc', 'akiec']
 all_classes = ['nv','mel','bkl','bcc','akiec','vasc','df']
-dsMean = [0.763038, 0.54564667, 0.57004464]
-dsStd = [0.14092727, 0.15261286, 0.1699712]
+dsMean = [0.49139968, 0.48215827, 0.44653124]
+dsStd = [0.24703233, 0.24348505, 0.26158768]

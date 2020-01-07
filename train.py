@@ -27,6 +27,9 @@ epochs = 100
 lr = 0.0001
 decay = 1e-4
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+ 
+
 model = model.ood_model(num_classes = len(all_classes[1:]))
 optimizer = optim.Adam(model.parameters(),lr=lr,weight_decay=decay)
 
@@ -39,11 +42,11 @@ scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer,
         1,  # since lr_lambda computes multiplicative factor
         1e-6 / 0.1))
 
-model.cuda()
+model.to(device)
 trainLoss = []
 valLoss = []
 path='./logs/'
-writer= SummaryWriter(f'logs/OOD_{lr}_{batch}')
+writer= SummaryWriter(f'{path}OOD_{lr}_{batch}')
 for i in tqdm.trange(epochs,desc='epochs',leave=False):
     train_losses = []
     val_losses=[]
@@ -52,7 +55,8 @@ for i in tqdm.trange(epochs,desc='epochs',leave=False):
     for idx,(data,target) in enumerate(tqdm.tqdm(train_data,desc ='train_iter',leave=False)):
         # print(data.shape)
         # break
-        data,target = data.cuda(),target.cuda()
+        #import pdb; pdb.set_trace()
+        data,target = data.to(device),target.to(device)
         x = model(data)
 
         optimizer.zero_grad()
@@ -69,7 +73,7 @@ for i in tqdm.trange(epochs,desc='epochs',leave=False):
     model.eval()
     
     for idx,(vdata,vtarget) in enumerate(tqdm.tqdm(val_data,desc ='val_iter',leave=False)):
-        vdata,vtarget = vdata.cuda(), vtarget.cuda()
+        vdata,vtarget = vdata.to(device), vtarget.to(device)
         y = model(vdata)
         optimizer.zero_grad()
         vloss = loss_fn(y,vtarget)

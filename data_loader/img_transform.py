@@ -66,16 +66,23 @@ class TransformData(Dataset):
         self.target_transform = target_transform
         self.classes=load_classes
         
+    def transform(self,inputs):
+        angle=uniform(-20,20)
+        translate=(uniform(-5,5),uniform(-5,5),0)
+        inputs=ndimage.rotate(inputs,angle,reshape=False,order=3,mode='nearest')
+        #import pdb; pdb.set_trace()
+        inputs=ndimage.shift(inputs, translate,mode='nearest')
+
+        return inputs
+
 
     def __getitem__(self, idx):
         # extract data from inner dataset
         inputs, target = self.ds[idx]
         target=self.classes.index(target)
-        
-        inputs=self.input_transforms(inputs)    
-        if self.target_transform is not None:
-            target = self.target_transform(target)
-
+        inputs = self.transform(inputs)
+        noise=np.random.normal(loc=0.0,scale=0.1,size=(224,224,3))
+        inputs=self.input_transforms(inputs)
         return inputs, target
 
     def __len__(self):
