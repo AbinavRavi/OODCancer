@@ -12,6 +12,8 @@ all_healthy_file=[]
 all_pickle=glob.glob('./click_farm/**')
 for pkl in all_pickle:
     all_healthy_file.append(read_pickle(pkl))
+    
+print(f'TOTAL HEALTHY SAMPLES:{len(all_healthy_file)}')
 
 with open('./click_farm/final_healthy.pickle', 'wb') as handle:
     pickle.dump(all_healthy, handle, protocol=pickle.HIGHEST_PROTOCOL)
