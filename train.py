@@ -46,7 +46,7 @@ valLoss = []
 for i in tqdm.trange(epochs,desc='epochs',leave=False):
     losses = []
     model.train()
-    for data,target in train_data:
+    for data,target in tqdm.tqdm(train_data,desc ='per_iteration',leave=False):
         # print(data.shape)
         # break
         data,target = data.cuda(),target.cuda()
@@ -70,7 +70,7 @@ for i in tqdm.trange(epochs,desc='epochs',leave=False):
     valLoss = np.array(vallosses).mean()
     print('epoch:{} \t'.format(i+1),'trainloss:{}'.format(trainLoss),'\t','valloss:{}'.format(valLoss))
     if (epochs%5==0):
-        torch.save(model,'./trained_model/{}.pt'.format(i+1))
+        torch.save(model,'./trained_models/{}.pt'.format(i+1))
     
         
 
