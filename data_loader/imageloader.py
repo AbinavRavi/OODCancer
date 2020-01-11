@@ -2,6 +2,7 @@ from torch.utils.data import Dataset
 
 import pandas as pd
 from skimage.io import imread
+from skimage.transform import rescale
 
 from config.data_utils import all_classes
 
@@ -20,11 +21,18 @@ class data_loader_classifier(Dataset):
         self.imgs=df['image_id'].tolist() 
         self.cls=df['dx'].tolist()
         self.path=path_to_img
-    
+
+    def get_image(self,path):
+        img= imread(path)
+        rescaled_img=rescale(img,0.25,order=3,multichannel=True)   
+
+        return rescaled_img
     def __getitem__(self, idx):
         img_path=self.path+self.imgs[idx]+'.jpg'
+        img=self.get_image(img_path)
+
         img_cls=self.cls[idx]
-        return imread(img_path), img_cls
+        return img, img_cls
         
 
 
