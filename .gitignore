@@ -134,3 +134,4 @@ dmypy.json
 
 #models
 /trained_models
+/logs
