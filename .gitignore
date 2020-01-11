@@ -131,3 +131,7 @@ dmypy.json
 #dataset
 /data
 /saved
+
+#models
+/trained_models
+/logs

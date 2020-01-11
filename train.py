@@ -9,20 +9,22 @@ import tqdm
 from model import model
 from model.loss import loss_fn
 import pdb
+import matplotlib.pyplot as plt
+from torch.utils.tensorboard import SummaryWriter
 
-seed = 137
+seed = 1
 torch.manual_seed(seed)
 torch.cuda.manual_seed(seed)
 np.random.seed(seed)
 
 metadata = './data/HAM10000_metadata.csv'
 images = './data/'
-
-train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes[1:],images,create_split=True,split=(0.7,0.1,0.2),batch=8)
+batch=32
+train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes[1:],images,create_split=True,split=(0.7,0.1,0.2),batch=batch)
 
 #hyperparameters
-epochs = 10
-lr = 0.001
+epochs = 100
+lr = 0.0001
 decay = 1e-4
 
 model = model.ood_model(num_classes = len(all_classes[1:]))
@@ -37,40 +39,50 @@ scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer,
         1,  # since lr_lambda computes multiplicative factor
         1e-6 / 0.1))
 
-
-
-
 model.cuda()
 trainLoss = []
 valLoss = []
+path='./logs/'
+writer= SummaryWriter(f'logs/OOD_{lr}_{batch}')
 for i in tqdm.trange(epochs,desc='epochs',leave=False):
-    losses = []
+    train_losses = []
+    val_losses=[]
+
     model.train()
-    for data,target in train_data:
+    for idx,(data,target) in enumerate(tqdm.tqdm(train_data,desc ='train_iter',leave=False)):
         # print(data.shape)
         # break
         data,target = data.cuda(),target.cuda()
         x = model(data)
 
         optimizer.zero_grad()
-        # pdb.set_trace()
         loss = loss_fn(x,target)
         loss.backward()
+        
         optimizer.step()
-        scheduler.step()
-        losses.append(loss.item())
-    trainLoss = np.array(losses).mean()
+        #scheduler.step()
+        
+        train_losses.append(loss.item())
+        writer.add_scalar('ItrLoss/train',loss.item(),i*len(train_data)+idx)
+    trainLoss.append(np.array(train_losses).mean())
+    
     model.eval()
-    vallosses = []
-    for vdata,vtarget in val_data:
+    
+    for idx,(vdata,vtarget) in enumerate(tqdm.tqdm(val_data,desc ='val_iter',leave=False)):
         vdata,vtarget = vdata.cuda(), vtarget.cuda()
         y = model(vdata)
+        optimizer.zero_grad()
         vloss = loss_fn(y,vtarget)
-        vallosses.append(vloss.item())
-    valLoss = np.array(vallosses).mean()
-    print('epoch:{} \t'.format(i+1),'trainloss:{}'.format(trainLoss),'\t','valloss:{}'.format(valLoss))
-    if (epochs%5==0):
-        torch.save(model,'./trained_model/{}.pt'.format(i+1))
+        val_losses.append(vloss.item())
+        writer.add_scalar('ItrLoss/val',vloss.item(),i*len(val_data)+idx)
+    valLoss.append(np.array(val_losses).mean())
+    print('epoch:{} \t'.format(i+1),'trainloss:{0:.5f}'.format(trainLoss[i]),'\t','valloss:{0:.5f}'.format(valLoss[i]))
+
+    writer.add_scalars('EpsLoss/',{'train':trainLoss[i],'val':valLoss[i]},i)
+    
+    if (i%2==0):
+        torch.save(model,'./trained_models/{}_{}.pt'.format(lr,i+1))
+    
     
         
 
