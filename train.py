@@ -9,6 +9,7 @@ import tqdm
 from model import model
 from model.loss import loss_fn
 import pdb
+import matplotlib.pyplot as plt
 
 seed = 137
 torch.manual_seed(seed)
@@ -21,8 +22,8 @@ images = './data/'
 train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes[1:],images,create_split=True,split=(0.7,0.1,0.2),batch=8)
 
 #hyperparameters
-epochs = 10
-lr = 0.001
+epochs = 100
+lr = 0.0005
 decay = 1e-4
 
 model = model.ood_model(num_classes = len(all_classes[1:]))
@@ -70,7 +71,14 @@ for i in tqdm.trange(epochs,desc='epochs',leave=False):
     valLoss = np.array(vallosses).mean()
     print('epoch:{} \t'.format(i+1),'trainloss:{}'.format(trainLoss),'\t','valloss:{}'.format(valLoss))
     if (epochs%5==0):
-        torch.save(model,'./trained_models/{}.pt'.format(i+1))
+        torch.save(model,'./trained_models/0.0005_{}.pt'.format(i+1))
+    plt.plot(trainLoss, label='train')
+    plt.plot(valLoss, label='val')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()
+plt.savefig('Final_curve.png')
     
         
 
