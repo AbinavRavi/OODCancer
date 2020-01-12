@@ -24,11 +24,10 @@ def train_val_test_split(targets,split):
     #import pdb;pdb.set_trace()
     return train_idx, valid_idx, test_idx
 
-def prepare_data(path_to_csv,load_classes,path_to_img,create_split=False,split=(70,10,20),batch=16):
-    
-    ds=data_loader_classifier(path_to_csv,load_classes, path_to_img)
+def prepare_data(path_to_csv,load_classes,path_to_img,create_split=False,split=(70,10,20),batch=16, path_to_pickle='./', test=False):
+    if 'norm' in load_classes: load_classes.remove('norm')
+    ds=data_loader_classifier(path_to_csv,load_classes, path_to_img, path_to_pickle, test)
 
-        
     image_transform = Compose([
         ImToCaffe(),
         NpToTensor()
@@ -68,4 +67,24 @@ def prepare_data(path_to_csv,load_classes,path_to_img,create_split=False,split=(
         train_ds=DataLoader(ds, batch_size=batch, shuffle=True)
         return train_ds
 
+
+def prepare_test_data(path_to_csv, load_classes, path_to_img, batch=16, path_to_pickle='./Clickfarm/click_farm/final_healthy.pickle', test=True):
+    
+    ds=data_loader_classifier(path_to_csv,load_classes, path_to_img, path_to_pickle, test=True)
+
+        
+    image_transform = Compose([
+        ImToCaffe(),
+        NpToTensor()
+    ])
+
+    target_transform = SegToTensor()
+    
+    if 'norm' not in load_classes:
+        load_classes+=['norm']
+    ds = TransformData(ds,load_classes, input_transforms=image_transform, target_transform=target_transform)
+ 
+    test_ds=DataLoader(ds, batch_size=batch, shuffle=False)
+    
+    return test_ds
 
