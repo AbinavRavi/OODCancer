@@ -1,8 +1,8 @@
 import torch.nn as nn
-from config.data_utils import class_weights
+from config.data_utils import *
 
-if(cuda.is_available == True):
-    class_weights.cuda()
+if(torch.cuda.is_available == True):
+    class_weights=class_weights.cuda()
 else:
     pass
 loss = nn.CrossEntropyLoss(weight=class_weights)

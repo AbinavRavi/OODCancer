@@ -19,12 +19,8 @@ np.random.seed(seed)
 metadata = './data/HAM10000_metadata.csv'
 images = './data/'
 
-_, _, test_data = dataloader.prepare_data(metadata,all_classes[1:],images,create_split=True,split=(0.7,0.1,0.2),batch=8)
+test_data=dataloader.prepare_test_data(metadata, all_classes[0:1]+['norm'], images)
 
-#hyperparameters
-epochs = 100
-lr = 0.001
-decay = 1e-4
 
 #Load the model
 model = torch.load('')
