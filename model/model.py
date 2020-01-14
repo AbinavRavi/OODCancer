@@ -12,13 +12,15 @@ class ood_model(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
         # pre-trained features
-        backbone = models.resnet18(pretrained=True)
+        backbone = models.densenet121(pretrained=True)
+        num_ftrs = backbone.classifier.in_features
+        backbone.fc = nn.Linear(num_ftrs, num_classes)
         
-        backbone.fc = nn.Sequential(
-               nn.Linear(512, 128),
-               nn.ReLU(inplace=True),
-               nn.Dropout(p=0.5),
-               nn.Linear(128, num_classes))
+        # backbone.fc = #nn.Sequential(
+        #        #nn.Linear(512, 128),
+        #        #nn.ReLU(inplace=True),
+        #        nn.Dropout(p=0.5),
+        #        nn.Linear(128, num_classes))
 
         # backbone.conv1 = nn.Conv2d(3,64,kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
         

@@ -20,11 +20,11 @@ np.random.seed(seed)
 metadata = './data/HAM10000_metadata.csv'
 images = './data/'
 batch=32
-train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes[1:],images,create_split=True,split=(0.7,0.1,0.2),batch=batch)
+train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes[1:],images,create_split=True,split=(0.6,0.2,0.2),batch=batch)
 
 #hyperparameters
-epochs = 100
-lr = 0.0001
+epochs = 10
+lr = 1e-3
 decay = 1e-4
 
 model = model.ood_model(num_classes = len(all_classes[1:]))
