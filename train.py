@@ -20,7 +20,7 @@ np.random.seed(seed)
 metadata = './data/HAM10000_metadata.csv'
 images = './data/'
 batch=128
-train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes[1:],images,create_split=True,split=(0.64,0.16,0.2),batch=batch)
+train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes,images,create_split=True,split=(0.64,0.16,0.2),batch=batch)
 
 #hyperparameters
 epochs = 100
@@ -30,7 +30,7 @@ decay = 1e-4
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
  
 
-model = model.ood_model(num_classes = len(all_classes[1:]))
+model = model.ood_model(num_classes = len(all_classes))
 optimizer = optim.Adam(model.parameters(),lr=lr)
 
 def cosine_annealing(step, total_steps, lr_max, lr_min):
