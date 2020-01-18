@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import torch
 
 lesion_type_dict = {
     'nv': 'Melanocytic nevi',
@@ -35,8 +36,8 @@ def estimate_weights_mfb(label,filepath):
         class_weights[i] = median_freq / counts[i]
     return class_weights
 
-classweight= estimate_weights_mfb(all_classes,'../data/HAM10000_metadata.csv')
-class_weights = torch.FloatTensor(class_weights)
+classweight= estimate_weights_mfb(all_classes,'./data/HAM10000_metadata.csv')
+class_weights = torch.FloatTensor(classweight)
 
-for i in range(len(all_classes)):
-    print(all_classes[i],":", classweight[i])
+# for i in range(len(all_classes)):
+#     print(all_classes[i],":", classweight[i])
