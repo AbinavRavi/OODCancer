@@ -70,10 +70,10 @@ class TransformData(Dataset):
         angle=uniform(-20,20)
         translate=(uniform(-5,5),uniform(-5,5),0)
         flip=uniform(0,3)
-        if flip<1:
+        if(flip<1):
             # flip horizontal
             inputs=np.flipud(inputs)
-        else if flip>2:
+        elif(flip>2):
             inputs=np.fliplr(inputs)
             # flip vertical
         inputs=ndimage.rotate(inputs,angle,reshape=False,order=3,mode='nearest')
