@@ -31,7 +31,7 @@ decay = 1e-4
 # IN model name replace with trained model
 model1 = torch.load('./trained_models/model_name.pt')
 model2 = distillation_model.distill(input_size = 3, num_classes=len(all_classes[1:]))
-optimizer = optim.Adam(model.parameters(),lr=lr,weight_decay=decay)
+optimizer = optim.Adam(model2.parameters(),lr=lr,weight_decay=decay)
 
 model1.eval()
 model2.train()
