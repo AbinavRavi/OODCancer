@@ -20,7 +20,9 @@ np.random.seed(seed)
 metadata = './data/HAM10000_metadata.csv'
 images = './data/'
 batch=128
-train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes,images,create_split=True,split=(0.64,0.16,0.2),batch=batch)
+
+pdb.set_trace()
+train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes[:-1],images,create_split=True,split=(0.64,0.16,0.2),batch=batch)
 
 #hyperparameters
 epochs = 100

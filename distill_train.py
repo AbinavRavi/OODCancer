@@ -23,20 +23,20 @@ np.random.seed(seed)
 metadata = './data/HAM10000_metadata.csv'
 images = './data/'
 batch=32
-train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes[1:],images,create_split=True,split=(0.7,0.1,0.2),batch=batch)
+train_data, val_data, _ = dataloader.prepare_data(metadata,all_classes[:-1],images,create_split=True,split=(0.64,0.16,0.2),batch=batch)
 
 epochs = 100
 lr = 0.001
 decay = 1e-4
-path='./distill_logs/'
-writer = SummaryWriter(f'{path}OOD_distill_negcosine_{lr}_{batch}')
+path='./new_distill_logs/'
+writer = SummaryWriter(f'{path}OOD_distill_L2loss_{lr}_{batch}')
 # IN model name replace with trained model
 model1 = torch.load('./trained_models/1e-05_61.pt')
-model2 = distillation_model.distill(input_size = 3, num_classes=len(all_classes[1:]))
+model2 = distillation_model.distill(input_size = 3, num_classes=len(all_classes[:-1]))
 lfn = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model2.parameters(),lr=lr,weight_decay=decay)
   
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',patience=5)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',patience=3)
 
 model1.eval()
 model2.train()
@@ -58,7 +58,7 @@ for i in tqdm(range(epochs)):
         out2 = model2(data)
 
         optimizer.zero_grad()
-        loss =  - cosine(out1,out2)
+        loss =  L2_loss(out1,out2)
         # pdb.set_trace()
         cl_loss = lfn(out2,target)
         loss.sum().backward()
@@ -79,7 +79,7 @@ for i in tqdm(range(epochs)):
     writer.add_scalars('EpsLoss/',{'train':train_loss[i],'classifier':c_loss[i]},i)
     
     if (i%2==0):
-        torch.save(model2,'./trained_models/cosine_distilled_{}_{}.pt'.format(lr,i+1))
+        torch.save(model2,'./trained_models/L2loss_distilled_{}_{}.pt'.format(lr,i+1))
 
 
 

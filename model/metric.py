@@ -29,12 +29,12 @@ def get_and_print_results(ood_loader):
     # print('AUROC: \t\t\t{:.2f}'.format(100 * auroc))
     return metrics
 
-def classification_accuracy(_pos, _neg):
+def classification_accuracy(prediction,labels):
     pos = np.array(_pos[:]).reshape((-1, 1))
     neg = np.array(_neg[:]).reshape((-1, 1))
     scores = np.squeeze(np.vstack((pos, neg)))
-    labels = np.zeros(len(scores), dtype=np.int32)
-    labels[:len(pos)] += 1
+    # labels = np.zeros(len(scores), dtype=np.int32)
+    # labels[:len(pos)] += 1
 
     accuracy = sklearn.metrics.accuracy_score(labels,scores)
     f1_score = sklearn.metrics.f1_score(labels,scores)
